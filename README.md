@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Solar System NodeJS Application
 
 A simple HTML+MongoDB+NodeJS project to display Solar System and it's planets.
@@ -47,3 +48,6 @@ If the installation was successful, you should be able to run the following comm
 ## Access Application on Browser
     http://localhost:3000/
 
+=======
+# Solar-System-nodeJS
+>>>>>>> a6d6757dc390fa882b39a30ba7e50455a31a0d24
