@@ -7,13 +7,13 @@ const app = express();
 const cors = require('cors')
 const username = process.env.MONGO_USERNAME;
 const password = encodeURIComponent(process.env.MONGO_PASSWORD);
-const MONGO_URI = process.env.MONGO_URI
+const uri = `mongodb+srv://${username}:${password}@cluster0.xjfwcft.mongodb.net/superData`;
 
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/')));
 app.use(cors())
 
-mongoose.connect(MONGO_URI, {
+mongoose.connect(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }, function(err) {
