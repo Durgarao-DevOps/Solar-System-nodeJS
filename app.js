@@ -5,21 +5,24 @@ const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
 const app = express();
 const cors = require('cors')
-
+const username = process.env.MONGO_USERNAME;
+const password = encodeURIComponent(process.env.MONGO_PASSWORD);
+const uri = process.env.MONGO_URI
 
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/')));
 app.use(cors())
 
-mongoose.connect(
-  'mongodb+srv://durgaraoravuri418_db_user:WMuQ8BHxg0n3u7ZS@cluster0.xjfwcft.mongodb.net/superData'
-)
-.then(() => {
-  console.log("MongoDB Atlas connected");
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}, function(err) {
+    if (err) {
+        console.log("error!! " + err)
+    } else {
+      //  console.log("MongoDB Connection Successful")
+    }
 })
-.catch((err) => {
-  console.log("Error:", err);
-});
 
 var Schema = mongoose.Schema;
 
