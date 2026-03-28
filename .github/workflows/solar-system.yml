@@ -28,16 +28,22 @@ jobs:
         with:
           #node-version: ${{ matrix['node-version'] }}
           node-version: 18
+      - name: cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
       - name: install dependencies
         run: npm install
       - name: unit-testing
         id: test
         run: npm test
       - name: Debug files 
-        if: failure() || success()
+        if: always()
         run: ls -R
       - name: Archive_Test_Result
-        if: failure() || success()
+        if: always()
         uses: actions/upload-artifact@v4
         with: 
           name: Mocha-Test-Result-${{ matrix.node-version }}-${{ matrix.os }}
@@ -53,6 +59,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+      - name: cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
       - name: install dependencies
         run: npm install
       - name: code-coverage
