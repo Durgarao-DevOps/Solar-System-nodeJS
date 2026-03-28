@@ -109,3 +109,9 @@ jobs:
           else
             echo "Live endpoint is healthy. Status code: $response"
           fi
+      - name: Docker push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ${{ vars.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
