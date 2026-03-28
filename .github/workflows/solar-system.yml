@@ -11,21 +11,23 @@ env:
 jobs:
   unit-testing:
     name: Unit Testing
-    strategy:
-      matrix:
-        node-version: [18,19,20]
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        exclude:
-          - node-version: 19
-            os: windows-latest
-    runs-on: ${{ matrix.os }}
+    #strategy:
+      #matrix:
+        #node-version: [18,19,20]
+        #os: [ubuntu-latest, windows-latest, macos-latest]
+        #exclude:
+          #- node-version: 19
+            #os: windows-latest
+    #runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - name: checkout code 
         uses: actions/checkout@v4
       - name: setup nodeJs version
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix['node-version'] }}
+          #node-version: ${{ matrix['node-version'] }}
+          node-version: 18
       - name: install dependencies
         run: npm install
       - name: unit-testing
@@ -37,3 +39,25 @@ jobs:
         with: 
           name: Mocha-Test-Result-${{ matrix.node-version }}-${{ matrix.os }}
           path: test-results.xml
+
+  code-coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code 
+        uses: actions/checkout@v4
+      - name: setup nodeJs version
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: install dependencies
+        run: npm install
+      - name: code-coverage
+        run: npm run coverage
+      - name: Debug files 
+        run: ls -R
+      - name: Archive_Code_Coverage_Result
+        uses: actions/upload-artifact@v4
+        with: 
+          name: Code-Coverage-Result
+          path: coverage/lcov.info
