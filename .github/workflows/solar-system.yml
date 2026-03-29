@@ -90,6 +90,13 @@ jobs:
         with:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: GHCR login
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
       - name:  Docker build for testing
         uses: docker/build-push-action@v3
         with:
@@ -117,48 +124,3 @@ jobs:
           context: .
           push: true
           tags: ${{ vars.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
-  
-  ghcr:
-    name: Publish to GHCR
-    needs: [unit-testing, code-coverage]
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout code 
-        uses: actions/checkout@v4
-      - name: ghcr login
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name:  Docker build for testing
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: false
-          tags: ghcr.io/${{ github.repository_owner }}/solar-system:${{ github.sha }}
-      - name: Docker image testing
-        run: |
-          docker run -d -p 3000:3000 --name solar-system-test ghcr.io/${{ github.repository_owner }}/solar-system:${{ github.sha }}
-          sleep 10
-      - name: check /live endpoint
-        id: check_live_ghcr
-        run: |
-          response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/live)
-          if [ "$response" -ne 200 ]; then
-            echo "Live endpoint is not healthy. Status code: $response"
-            exit 1
-          else
-            echo "Live endpoint is healthy. Status code: $response"
-          fi
-      - name: set lower case owner
-        id: set_owner
-        run: echo "owner=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_OUTPUT
-      - name: Docker push to GHCR
-        if: steps.check_live_ghcr.outputs.status == '200'
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: false
-          tags: ghcr.io/${{ steps.set_owner.outputs.owner }}/solar-system:${{ github.sha }}
-
