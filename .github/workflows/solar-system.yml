@@ -151,11 +151,14 @@ jobs:
           else
             echo "Live endpoint is healthy. Status code: $response"
           fi
+      - name: set lower case owner
+        id: set_owner
+        run: echo "owner=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_OUTPUT
       - name: Docker push to GHCR
         if: steps.check_live_ghcr.outputs.status == '200'
         uses: docker/build-push-action@v3
         with:
           context: .
-          push: true
-          tags: ghcr.io/${{ github.repository_owner }}/solar-system:${{ github.sha }}
+          push: false
+          tags: ghcr.io/${{ steps.set_owner.outputs.owner }}/solar-system:${{ github.sha }}
 
