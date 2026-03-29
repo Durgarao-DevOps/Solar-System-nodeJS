@@ -78,9 +78,13 @@ jobs:
           name: Code-Coverage-Result
           path: coverage/lcov.info
 
-  docker-build:
+  Containerization:
     name: Docker Build
     needs: [unit-testing, code-coverage]
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
     runs-on: ubuntu-latest
     steps:
       - name: checkout code 
